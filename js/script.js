@@ -1,10 +1,11 @@
+/*
 let preQuestions =
     [
         {
             "category": "Entertainment: Music",
             "type": "multiple",
             "difficulty": "medium",
-            "question": "The song &quot;Twin Size Mattress&quot; was written by which band?",
+            "question": "The song &quot;Twin Size Mattress&quot; was written by which band? This is not a server question",
             "correct_answer": "The Front Bottoms",
             "answers": ["The Front Bottoms", "Twenty One Pilots", "The Wonder Years", "The Smith Street Band"]
         },
@@ -170,6 +171,10 @@ let preQuestions =
                 "Video Card"
             ]
         }];
+*/
+        
+
+              
 
 let next = document.querySelector('.next');
 let previous = document.querySelector('.previous');
@@ -188,10 +193,31 @@ let questionNumber = document.querySelector('.questionNumber');
 let index = 0;
 let points = 0;
 
-setQuestion(0);
+let preQuestions = [{
+    "category": String,
+    "type": String,
+    "difficulty": String,
+    "question": String,
+    "correct_answer": String,
+    "answers": [String]
+}];
+
+getQuestionsServer();
+//getQuestionsServer().then(setQuestion(0));
+//setQuestion(0);
 
 for (let i = 0; i < answers.length; i++) {
     answers[i].addEventListener('click', doAction);
+}
+
+function  getQuestionsServer() {
+    fetch('https://quiztai.herokuapp.com/api/quiz')
+    .then(resp => resp.json())
+    .then(resp => {
+           preQuestions = resp;
+           setQuestion(0);
+    });
+    
 }
 
 function doAction(event) {
@@ -216,6 +242,7 @@ function clearClass() {
 }
 
 function setQuestion(index) {
+    //getQuestionsServer();
     clearClass();
     question.innerHTML = preQuestions[index].question;
 
@@ -268,8 +295,9 @@ next.addEventListener('click', function () {
         userScorePoint.innerHTML = points;
         let previousPoints = localStorage.getItem("score");
         localStorage.setItem("score", points);
-        average.innerHTML = (points + previousPoints) / 2;
+        average.innerHTML = (Number(points) + Number(previousPoints)) / 2;
         let gamesNumber = localStorage.getItem("gamesNumber");
+        gamesNumber = Number(gamesNumber) + 1;
         localStorage.setItem("gamesNumber", gamesNumber);
     }
     activateAnswers();
